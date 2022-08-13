@@ -50,6 +50,7 @@ export default {
   border: 3px solid #222;
   box-shadow: 1px 2px 10px rgba(55, 55, 55, .5);
   position: relative;
+  transform: rotate(180deg);
 }
 
 .row {
