@@ -1,8 +1,10 @@
+/* eslint-disable */
 import { io } from 'socket.io-client'
 
 class SocketioService {
-  socket;
-  constructor() {}
+  constructor() {
+    this.socket = null
+  }
 
   setupSocketConnection () {
     this.socket = io('http://localhost:3000')

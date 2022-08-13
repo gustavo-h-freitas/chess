@@ -1,10 +1,20 @@
 <template>
   <div class="board">
-    <div class="row" v-for="row in 8" :key="row">
-      <div :id="`${row}${col}`" class="square" v-for="col of coordinates" :key="`${row}${col}`"/>
+    <div 
+      v-for="row in 8" 
+      :key="row"
+      class="row"
+    >
+      <div 
+        v-for="col of coordinates"
+        :id="generateCoordinates(row, col)"
+        :key="generateCoordinates(row, col)"
+        class="square"
+        @click="handlePositionSelect(`${row}${col}`)"
+      />
     </div>
   </div>
-  <PiecesHandler />
+  <PiecesHandler ref="PiecesHandler" />
 </template>
 
 <script>
@@ -16,7 +26,17 @@ export default {
 
   data: () => ({
     coordinates: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
-  })
+  }),
+
+  methods: {
+    generateCoordinates (row, col) {
+      return `${row}${col}`
+    },
+
+    handlePositionSelect (position) {
+      this.$refs.PiecesHandler.handleBoardClick(position)
+    }
+  }
 }
 </script>
 
@@ -29,7 +49,6 @@ export default {
   margin: 0 auto;
   border: 3px solid #222;
   box-shadow: 1px 2px 10px rgba(55, 55, 55, .5);
-  rotate: 180deg;
   position: relative;
 }
 

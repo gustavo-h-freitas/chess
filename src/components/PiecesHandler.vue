@@ -1,9 +1,10 @@
 <template>
   <div>
     <ChessPiece
-      v-for="piece in piecesPosition" 
+      v-for="(piece) in piecesPosition" 
       :key="piece.position"
       v-bind="piece"
+      @select-piece="handleSelectPiece(piece)"
     />
   </div>
 </template>
@@ -17,10 +18,28 @@ export default {
   },
 
   data: () => ({
-    piecesPosition: []
-  }),
+    piecesPosition: [],
+    selectedPiece: null
+  }), 
+
+  created () {
+    this.initialPiecesPosition()
+  },
 
   methods: {
+    handleSelectPiece (piece) {
+      this.selectedPiece = piece
+    },
+
+    handleBoardClick (position) {
+      if (!this.selectedPiece) return
+
+      const pieceIndex = this.piecesPosition.findIndex(({piece, color}) => this.selectedPiece.piece === piece && this.selectedPiece.color === color)
+      this.piecesPosition[pieceIndex].position = position
+
+      this.selectedPiece = null
+    },
+
     initialPiecesPosition () {
       const rows = {
         '8': 'black',
@@ -42,7 +61,7 @@ export default {
           for (let position = 0; position < 8; position++) {
             this.piecesPosition.push({
               color,
-              piece: 'pawn',
+              piece: `pawn-${position}`,
               position: `${row}${alphabet[position]}`
             })
           }
@@ -51,17 +70,13 @@ export default {
           pieces[color].forEach((piece, index) => {
             this.piecesPosition.push({
               color,
-              piece,
+              piece: `${piece}-${index}`,
               position: `${row}${alphabet[index]}`
             })
           })
         }
       })
     }
-  }, 
-
-  created () {
-    this.initialPiecesPosition()
   }
 }
 </script>

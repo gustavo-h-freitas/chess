@@ -1,5 +1,11 @@
 <template>
-  <img :src="getPieceUrl()" alt="" class="piece" ref="piece">
+  <img 
+    ref="piece"
+    :src="getPieceUrl()"
+    alt=""
+    class="piece"
+    @click="selectPiece"
+  >
 </template>
 
 <script>
@@ -19,26 +25,41 @@ export default {
       default: ''
     }
   },
+  emits: ['select-piece'],
 
-  methods: {
-    getPieceUrl () {
-      const piece = require(`../assets/pieces/${this.color}/${this.piece}.svg`)
-      return piece
-    },
-
-    positionPiece () {
-      if (!this.position) return
-
-      const square = document.getElementById(`${this.position}`)
-      const positionInTheMiddle = 5
-      const rect = square.getBoundingClientRect()
-      this.$refs.piece.style.right = `${rect.x + positionInTheMiddle}px`
-      this.$refs.piece.style.top = `${rect.y + positionInTheMiddle}px`
+  watch: {
+    position: {
+      handler (newPosition) {
+        this.positionPiece(newPosition)
+      }
     }
   },
 
   mounted () {
-    this.positionPiece()
+    this.positionPiece(this.position)
+  },
+
+  methods: {
+    selectPiece () {
+      this.$emit('select-piece', this.$refs.piece)
+    },
+
+    getPieceUrl () {
+      const pieceName = this.piece.split('-')[0]
+      const piece = require(`../assets/pieces/${this.color}/${pieceName}.svg`)
+      return piece
+    },
+
+    positionPiece (position) {
+      if (!position) return
+
+      const square = document.getElementById(`${position}`)
+      console.log(square);
+      const positionInTheMiddle = 5
+      const rect = square.getBoundingClientRect()
+      this.$refs.piece.style.left = `${rect.x + positionInTheMiddle}px`
+      this.$refs.piece.style.top = `${rect.y + positionInTheMiddle}px`
+    }
   }
 }
 </script>
