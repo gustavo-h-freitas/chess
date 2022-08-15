@@ -9,7 +9,6 @@ socketIo.socket.on('currentPlayer', payload => {
 })
 
 socketIo.socket.on('playerMove', ({ piecesPosition, playerTurn }) => {
-  console.log('CALLED', piecesPosition, playerTurn);
   store.dispatch('setPiecesPosition', piecesPosition)
   store.dispatch('setPlayerTurn', playerTurn)
 })
@@ -35,6 +34,7 @@ export const store = createStore({
     },
 
     resetGame ({ state }, payload) {
+      if (payload) state.playerTurn = 'white'
       state.resetGame = payload
     },
 

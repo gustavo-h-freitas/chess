@@ -35,7 +35,7 @@ export default {
     }),
 
     isPlayerPiece () {
-      return this.piece.includes(this.player)
+      return this.color.includes(this.player)
     },
 
     isCurrentPlayerTurn () {
@@ -57,7 +57,7 @@ export default {
 
   methods: {
     selectPiece () {
-      if (!this.isCurrentPlayerTurn && !this.isPlayerPiece) return
+      if (!this.isCurrentPlayerTurn || !this.isPlayerPiece) return
 
       this.$emit('select-piece', this.$refs.piece)
     },
