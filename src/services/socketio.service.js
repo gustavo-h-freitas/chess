@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { io } from 'socket.io-client'
+import { store } from '../store/index'
 
 class SocketioService {
   constructor() {
@@ -10,10 +11,8 @@ class SocketioService {
     this.socket = io('http://localhost:3000')
   }
 
-  disconnect () {
-    if (this.socket) {
-      this.socket.disconnect()
-    }
+  emit (event, payload) {
+    this.socket.emit(event, payload)
   }
 }
 

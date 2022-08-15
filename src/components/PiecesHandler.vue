@@ -11,6 +11,7 @@
 
 <script>
 import ChessPiece from './ChessPiece.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -18,9 +19,26 @@ export default {
   },
 
   data: () => ({
-    piecesPosition: [],
     selectedPiece: null
-  }), 
+  }),
+
+  computed: {
+    ...mapGetters({
+      piecesPosition: 'GET_POSITIONS',
+      resetGame: 'GET_RESET_GAME'
+    })
+  },
+
+  watch: {
+    resetGame: {
+      handler (newValue) {
+        if (newValue) {
+          this.initialPiecesPosition()
+          this.$store.dispatch('resetGame', false)
+        }
+      }
+    }
+  },
 
   created () {
     this.initialPiecesPosition()
@@ -35,12 +53,13 @@ export default {
       if (!this.selectedPiece) return
 
       const pieceIndex = this.piecesPosition.findIndex(({piece, color}) => this.selectedPiece.piece === piece && this.selectedPiece.color === color)
-      this.piecesPosition[pieceIndex].position = position
+      this.$store.dispatch('movePiece', { index: pieceIndex, position, socketEmit: true })
 
       this.selectedPiece = null
     },
 
     initialPiecesPosition () {
+      const innerPiecesPosition = []
       const rows = {
         '8': 'black',
         '7': 'black',
@@ -59,7 +78,7 @@ export default {
       Object.entries(rows).forEach(([row, color]) => {
         if (pawnRows.includes(row)) {
           for (let position = 0; position < 8; position++) {
-            this.piecesPosition.push({
+            innerPiecesPosition.push({
               color,
               piece: `pawn-${position}`,
               position: `${row}${alphabet[position]}`
@@ -68,7 +87,7 @@ export default {
 
         } else {
           pieces[color].forEach((piece, index) => {
-            this.piecesPosition.push({
+            innerPiecesPosition.push({
               color,
               piece: `${piece}-${index}`,
               position: `${row}${alphabet[index]}`
@@ -76,6 +95,8 @@ export default {
           })
         }
       })
+
+      this.$store.dispatch('setPiecesPosition', innerPiecesPosition)
     }
   }
 }

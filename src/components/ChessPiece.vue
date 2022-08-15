@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -27,6 +28,21 @@ export default {
   },
   emits: ['select-piece'],
 
+  computed: {
+    ...mapGetters({
+      playerTurn: 'GET_PLAYER_TURN',
+      player: 'GET_PLAYER'
+    }),
+
+    isPlayerPiece () {
+      return this.piece.includes(this.player)
+    },
+
+    isCurrentPlayerTurn () {
+      return this.player === this.playerTurn
+    }
+  },
+
   watch: {
     position: {
       handler (newPosition) {
@@ -41,6 +57,8 @@ export default {
 
   methods: {
     selectPiece () {
+      if (!this.isCurrentPlayerTurn && !this.isPlayerPiece) return
+
       this.$emit('select-piece', this.$refs.piece)
     },
 
@@ -54,7 +72,7 @@ export default {
       if (!position) return
 
       const square = document.getElementById(`${position}`)
-      console.log(square);
+
       const positionInTheMiddle = 5
       const rect = square.getBoundingClientRect()
       this.$refs.piece.style.left = `${rect.x + positionInTheMiddle}px`
